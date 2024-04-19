@@ -1,0 +1,18 @@
+class User {                             // класс пользователь
+	protected $name ;                    // Некоторые свойства
+ 	protected $user_id = "id_number";
+	protected $age;
+	protected function getIDNumber() {      // Некоторый метод
+		echo $this -> user_id;
+	}
+}
+
+class User_Emloyee extends User {             // Класс пользователь-сотрудник
+	private $salary;                              // приватное свойство "зарплата"
+	protected function salary_calculation {         // метод - расчет зарплаты
+		//операции для расчета зарплаты
+	}
+	protected function vacation_pay_calculation {     // метод - расчет отпускных
+		// операции для расчета отпускных
+	}
+}
