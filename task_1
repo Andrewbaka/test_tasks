@@ -1,0 +1,85 @@
+CREATE TABLE Users            /*  создаем таблицу Users */
+(
+  userid INTEGER PRIMARY Key,
+  age int(150)
+)
+;
+
+CREATE TABLE Items            /*  создаем таблицу Items */
+(
+  itemid INTEGER PRIMARY Key,
+  price INTEGER
+  
+)
+; 
+
+CREATE TABLE Purchases        /*  создаем таблицу Purchases */
+(
+  purchaseid INTEGER,
+  userid INTEGER,
+  itemid INTEGER,
+  datepurch INTEGER,                                   /* формат данных можно поменять на date, для удобства тестирования поставил     int(записываться будет только число месяца)*/
+  FOREIGN KEy (userid) REFERENCES Users (userid),
+  FOREIGN KEy (itemid) REFERENCES Items (itemid)
+)
+;
+
+INSERT INTO Users(userid, age) /* Заполняем таблицу Users тестовыми данными */
+VALUES 
+(1, 15),
+(2, 18),
+(3,19),
+(4,23),
+(5,25),
+(6,35),
+(7,45)
+;
+
+INSERT INTO Items(Itemid, price)  /* Заполняем таблицу Items тестовыми данными */
+VALUES 
+(1, 500),
+(2, 1000),
+(3, 700),
+(4, 600)
+;
+
+INSERT INTO Purchases(purchaseid, userid, itemid, datepurch)  /* Заполняем таблицу Purchases тестовыми данными */
+VALUES 
+(1, 1, 1, 10),
+(2, 2, 3, 9),
+(3, 2, 1, 7),
+(4, 3, 2, 6),
+(5, 3, 3, 5),
+(6, 4, 1, 5),
+(7, 5, 3, 5),
+(8, 5, 4, 5),
+(9, 6, 4, 5),
+(10, 7, 2, 5),
+(11, 7, 2, 7),
+(12, 7, 3, 7)
+;
+
+CREATE TABLE temp_table  /* Создаем таблицу для выборочных данных */
+(
+  age int(150),
+  price INTEGER,
+  datepurch INTEGER
+  )
+  ;
+
+INSERT INTO temp_table (age, price, datepurch)   /* Заполняем таблицу temp_table */
+SELECT age, price, datepurch From (
+	Select age, price, datepurch From Purchases
+	JOIN Users on Users.userid = Purchases.userid
+	JOIN Items ON Items.itemid = Purchases.itemid
+  )
+  ;
+
+SELECT ROUND(AVG(price)) from temp_table    /* Запрос: какую сумму в среднем в месяц тратит: 
+                                            - пользователи в возрастном диапазоне от 18 до 25 лет включительно   */
+WHERE age >= 18 AND  age <= 25
+;
+
+SELECT datepurch, SUM(price) FROM temp_table  /* Запрос: Б) в каком месяце года выручка от пользователей в возрастном диапазоне 35+    самая большая (1 строка в списке)  */
+WHERE age >= 35 GROUP BY datepurch
+ORDER by 2 DESC
